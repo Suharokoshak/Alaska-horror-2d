@@ -1,33 +1,55 @@
-using System.Runtime.CompilerServices;
+using System;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
     [SerializeField] private float speed;
-    private Rigidbody2D rigidBody;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField] private float rotationSpeed;
+    
+    private Rigidbody2D _rigidbody2D;
+    
+    private Vector2 _directionLook;
+    private Vector2 _movementInput;
+
+    private void Awake()
     {
-        rigidBody = gameObject.GetComponent<Rigidbody2D>();
+        _rigidbody2D = gameObject.GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
+    private void FixedUpdate()
+    {
+        _rigidbody2D.linearVelocity = _movementInput * speed;
+    }
+
     void Update()
     {
-        float horizontal = Input.GetAxis("Horizontal");
-
-        float vertical = Input.GetAxis("Vertical");
-        rigidBody.linearVelocity = Vector2.up * speed * vertical + horizontal * Vector2.right * speed;
-
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector3 direction = mousePos - transform.position;
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0f, 0f, angle);
+        GetMovementInput();
+        RotateCharacter();
 
         if (Input.GetMouseButtonDown(0))
         {
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, 10000);
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, _directionLook, 10000);
             Debug.Log(hit.collider.gameObject.name);
         }
+    }
+
+    private void RotateCharacter()
+    {
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        _directionLook = (mousePos - transform.position).normalized;
+
+        float targetAngle = Mathf.Atan2(_directionLook.y, _directionLook.x) * Mathf.Rad2Deg;
+        float currentAngle = transform.rotation.eulerAngles.z;
+        float smoothAngle = Mathf.LerpAngle(currentAngle, targetAngle, rotationSpeed * Time.deltaTime);
+        
+        transform.rotation = Quaternion.Euler(0f, 0f, smoothAngle);
+    }
+
+    private void GetMovementInput()
+    {
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+        
+        _movementInput = new Vector2(horizontal, vertical);
     }
 }
