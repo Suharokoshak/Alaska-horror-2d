@@ -1,10 +1,14 @@
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
     [SerializeField] private float speed;
     [SerializeField] private float rotationSpeed;
+    [SerializeField] private GameObject shootPoint;
+    [SerializeField] private GameObject flash;
+    [SerializeField] private float destroyShootTime;
     
     private Rigidbody2D _rigidbody2D;
     
@@ -14,6 +18,7 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         _rigidbody2D = gameObject.GetComponent<Rigidbody2D>();
+        
     }
 
     private void FixedUpdate()
@@ -28,8 +33,18 @@ public class Player : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, _directionLook, 10000);
-            Debug.Log(hit.collider.gameObject.name);
+            RaycastHit2D hit = Physics2D.Raycast(shootPoint.transform.position , _directionLook, 10000);
+            GameObject flashCopy =  Instantiate(flash, shootPoint.transform);
+            Destroy(flashCopy, destroyShootTime);
+            
+            if (hit != null)
+            {
+                HealthSystem healthSys = hit.collider.gameObject.GetComponent<HealthSystem>();
+                if (healthSys != null) {
+                    healthSys.TakeDamage(42);
+                                       
+                }
+            }
         }
     }
 
@@ -52,4 +67,14 @@ public class Player : MonoBehaviour
         
         _movementInput = new Vector2(horizontal, vertical);
     }
-}
+    private int TextHello(string textDarova)
+    {
+
+
+        Debug.Log(textDarova);
+        return 2;
+
+
+     
+    }   
+}   
