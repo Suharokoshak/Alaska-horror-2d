@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject flash;
     [SerializeField] private float destroyShootTime;
     [SerializeField] private BulletTrail trail;
+    [SerializeField] private AudioSource shootSource;
 
     private Rigidbody2D _rigidbody2D;
 
@@ -38,6 +39,7 @@ public class Player : MonoBehaviour
             RaycastHit2D hit = Physics2D.Raycast(shootPoint.transform.position, _directionLook, 10000);
             GameObject flashCopy = Instantiate(flash, shootPoint.transform);
             BulletTrail trailCopy = Instantiate(trail, shootPoint.transform.position, shootPoint.transform.rotation);
+            shootSource.Play();
             trailCopy.SetDirection(_directionLook);
 
             Destroy(flashCopy, destroyShootTime);
