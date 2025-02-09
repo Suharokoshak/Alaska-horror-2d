@@ -1,4 +1,5 @@
 using System;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -38,7 +39,7 @@ public class Player : MonoBehaviour
         {
             RaycastHit2D hit = Physics2D.Raycast(shootPoint.transform.position, _directionLook, 10000);
             GameObject flashCopy = Instantiate(flash, shootPoint.transform);
-            BulletTrail trailCopy = Instantiate(trail, shootPoint.transform.position, shootPoint.transform.rotation);
+            BulletTrail trailCopy = Instantiate(trail, shootPoint.transform.position, transform.rotation);
             shootSource.Play();
             trailCopy.SetDirection(_directionLook);
 
@@ -50,7 +51,6 @@ public class Player : MonoBehaviour
                 if (healthSys != null)
                 {
                     healthSys.TakeDamage(42);
-
                 }
             }
         }
@@ -75,22 +75,8 @@ public class Player : MonoBehaviour
 
         _movementInput = new Vector2(horizontal, vertical);
     }
-    private int TextHello(string textDarova)
-    {
-
-
-        Debug.Log(textDarova);
-        return 2;
-
-
-
-    }
     private void OnDeathPlayer()
     {
         Destroy(gameObject);
-
-
     }
-
-
 }
