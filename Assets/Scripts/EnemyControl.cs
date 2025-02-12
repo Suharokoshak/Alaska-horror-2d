@@ -1,17 +1,19 @@
 using UnityEngine;
+using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
 public class EnemyControl : MonoBehaviour
 {
-    [Header("Настройки")]
+    [Header("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ")]
     [SerializeField] private float speed;
     [SerializeField] private float rotationSpeed;
 
     private Transform playerModel;
-    private Rigidbody2D rigidBody2D;
     private PlayerRespawner playerRespawner;
+    private NavMeshAgent navMeshAgent;
 
     private Vector2 direction;
-
+    
     public void Death()
     {
         Destroy(gameObject);
@@ -34,16 +36,16 @@ public class EnemyControl : MonoBehaviour
 
     private void Awake()
     {
-        rigidBody2D = gameObject.GetComponent<Rigidbody2D>();
-    }
-
-    private void FixedUpdate()
-    {
-        rigidBody2D.linearVelocity = direction * 1;
+        navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
+        
+        navMeshAgent.speed = speed;
+        navMeshAgent.updateRotation = false;
+        navMeshAgent.updateUpAxis = false;
     }
 
     private void Update()
     {
+        navMeshAgent.destination = playerModel.position;
         direction = (playerModel.position - gameObject.transform.position).normalized;
 
         float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90;
